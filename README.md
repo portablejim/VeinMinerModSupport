@@ -10,6 +10,10 @@ Minecraft Versions supported
 ----------------------------
 This supports both 1.5 and 1.6
 
+Installation
+------------
+Install into the mod folder in both 1.5 and 1.6.
+
 Downloads
 ----------
 
