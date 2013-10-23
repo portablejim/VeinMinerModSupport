@@ -18,7 +18,6 @@
 package portablejim.veinminermodsupport;
 
 import bluedart.api.IBreakable;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -50,12 +49,9 @@ public class VeinMinerModSupport {
 
     @ForgeSubscribe
     public void makeToolsWork(VeinminerCancelHarvest event) {
-        FMLLog.getLogger().info("EVENT1");
         if(Loader.isModLoaded("DartCraft")) {
-            FMLLog.getLogger().info("EVENT2");
             Item currentEquippedItem = event.player.getCurrentEquippedItem().getItem();
             if(currentEquippedItem instanceof IBreakable) {
-                FMLLog.getLogger().info("EVENT3");
                 event.setCanceled(true);
             }
         }
