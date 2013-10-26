@@ -21,10 +21,16 @@ import bluedart.api.IBreakable;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 import portablejim.veinminer.api.VeinminerCancelHarvest;
+
+import java.util.Random;
 
 import static cpw.mods.fml.common.Mod.Init;
 import static cpw.mods.fml.common.Mod.Instance;
@@ -49,11 +55,52 @@ public class VeinMinerModSupport {
 
     @ForgeSubscribe
     public void makeToolsWork(VeinminerCancelHarvest event) {
+        Item currentEquippedItem = event.player.getCurrentEquippedItem().getItem();
         if(Loader.isModLoaded("DartCraft")) {
-            Item currentEquippedItem = event.player.getCurrentEquippedItem().getItem();
             if(currentEquippedItem instanceof IBreakable) {
                 event.setCanceled(true);
             }
         }
+        if(Loader.isModLoaded("TConstruct")) {
+            tinkersConstructToolEvent(event);
+        }
+    }
+
+    private void tinkersConstructToolEvent(VeinminerCancelHarvest event) {
+        ItemStack currentItem = event.player.getCurrentEquippedItem();
+
+        if(currentItem == null) {
+            return;
+        }
+
+        if(!currentItem.hasTagCompound()) {
+            return;
+        }
+        NBTTagCompound toolTags = currentItem.getTagCompound().getCompoundTag("InfiTool");
+        if(toolTags == null) {
+            return;
+        }
+
+        boolean hasLava = toolTags.getBoolean("Lava");
+        if(!hasLava) {
+            return;
+        }
+
+        Random r = event.player.worldObj.rand;
+        Block block = Block.blocksList[event.blockId];
+        if(block == null || event.blockId < 1 || event.blockId > 4095) {
+            return;
+        }
+
+        ItemStack smeltStack = new ItemStack(
+                block.idDropped(event.blockMetadata, r, 0),
+                block.quantityDropped(event.blockMetadata, 0, r),
+                block.damageDropped(event.blockMetadata));
+        ItemStack smeltResult = FurnaceRecipes.smelting().getSmeltingResult(smeltStack);
+        if(smeltResult == null) {
+            return;
+        }
+
+        event.setCanceled(true);
     }
 }
