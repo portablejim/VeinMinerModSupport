@@ -18,8 +18,10 @@
 package portablejim.veinminermodsupport;
 
 import bluedart.api.IBreakable;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -45,23 +47,43 @@ import static cpw.mods.fml.common.Mod.Instance;
         version = ModInfo.VERSION)
 public class VeinMinerModSupport {
 
+    private boolean debugMode = false;
+
     @Instance(ModInfo.MOD_ID)
     public static VeinMinerModSupport instance;
 
     @Init
     public void init(@SuppressWarnings("UnusedParameters") FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
+
+        ModContainer thisMod = Loader.instance().getIndexedModList().get(ModInfo.MOD_ID);
+        if(thisMod != null) {
+            String fileName = thisMod.getSource().getName();
+            if(fileName.contains("-dev") || !fileName.contains(".jar")) {
+                debugMode = true;
+                devLog("DEV VERSION");
+            }
+        }
+    }
+
+    private void devLog(String string) {
+        if(debugMode) {
+            FMLLog.getLogger().info("[" + ModInfo.MOD_ID + "] " + string);
+        }
     }
 
     @ForgeSubscribe
     public void makeToolsWork(VeinminerCancelHarvest event) {
         Item currentEquippedItem = event.player.getCurrentEquippedItem().getItem();
         if(Loader.isModLoaded("DartCraft")) {
+            devLog("Dartcraft detected");
             if(currentEquippedItem instanceof IBreakable) {
+                devLog("Canceled breaking");
                 event.setCanceled(true);
             }
         }
         if(Loader.isModLoaded("TConstruct")) {
+            devLog("Tinkers Construct detected");
             tinkersConstructToolEvent(event);
         }
     }
@@ -70,25 +92,30 @@ public class VeinMinerModSupport {
         ItemStack currentItem = event.player.getCurrentEquippedItem();
 
         if(currentItem == null) {
+            devLog("ERROR: Item is null");
             return;
         }
 
         if(!currentItem.hasTagCompound()) {
+            devLog("ERROR: No NBT data");
             return;
         }
         NBTTagCompound toolTags = currentItem.getTagCompound().getCompoundTag("InfiTool");
         if(toolTags == null) {
+            devLog("ERROR: Not Dartcraft Tool");
             return;
         }
 
         boolean hasLava = toolTags.getBoolean("Lava");
         if(!hasLava) {
+            devLog("ERROR: Not lava tool");
             return;
         }
 
         Random r = event.player.worldObj.rand;
         Block block = Block.blocksList[event.blockId];
         if(block == null || event.blockId < 1 || event.blockId > 4095) {
+            devLog("ERROR: Block id out of range");
             return;
         }
 
@@ -98,9 +125,11 @@ public class VeinMinerModSupport {
                 block.damageDropped(event.blockMetadata));
         ItemStack smeltResult = FurnaceRecipes.smelting().getSmeltingResult(smeltStack);
         if(smeltResult == null) {
+            devLog("ERROR: No Smelt result");
             return;
         }
 
+        devLog("Canceling event");
         event.setCanceled(true);
     }
 }
