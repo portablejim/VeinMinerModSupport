@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.2
+----
+* Add support for Tinkers Construct auto-smelting tools.
+
 0.1.2
 -----
 * Remove debug statements.
