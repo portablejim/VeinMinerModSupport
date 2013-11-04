@@ -30,7 +30,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
-import portablejim.veinminer.api.VeinminerCancelHarvest;
+import portablejim.veinminer.api.VeinminerStartCheck;
 
 import java.util.Random;
 
@@ -73,7 +73,7 @@ public class VeinMinerModSupport {
     }
 
     @ForgeSubscribe
-    public void makeToolsWork(VeinminerCancelHarvest event) {
+    public void makeToolsWork(VeinminerStartCheck event) {
         Item currentEquippedItem = event.player.getCurrentEquippedItem().getItem();
         if(Loader.isModLoaded("DartCraft")) {
             devLog("Dartcraft detected");
@@ -88,7 +88,7 @@ public class VeinMinerModSupport {
         }
     }
 
-    private void tinkersConstructToolEvent(VeinminerCancelHarvest event) {
+    private void tinkersConstructToolEvent(VeinminerStartCheck event) {
         ItemStack currentItem = event.player.getCurrentEquippedItem();
 
         if(currentItem == null) {
