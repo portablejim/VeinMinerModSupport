@@ -103,8 +103,8 @@ public class VeinMinerModSupport {
         if(Loader.isModLoaded("DartCraft")) {
             devLog("Dartcraft detected");
             if(currentEquippedItem instanceof IBreakable) {
-                devLog("Canceled breaking");
-                event.setCanceled(true);
+                devLog("Allowed start");
+                event.allowVeinminerStart = true;
             }
         }
         if(Loader.isModLoaded("TConstruct")) {
@@ -154,8 +154,8 @@ public class VeinMinerModSupport {
             return;
         }
 
-        devLog("Canceling event");
-        event.setCanceled(true);
+        devLog("Allowing event");
+        event.allowVeinminerStart = true;
     }
 
     @ForgeSubscribe
