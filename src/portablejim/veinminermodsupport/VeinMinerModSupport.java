@@ -74,6 +74,7 @@ public class VeinMinerModSupport {
         forceConsumerAvailable = false;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @PostInit
     public void postInit(FMLPostInitializationEvent event) {
         if(Loader.isModLoaded("DartCraft")) {
@@ -170,6 +171,7 @@ public class VeinMinerModSupport {
             try {
                 Class IForceConsumer = Class.forName("bluedart.api.IForceConsumer");
                 if(IForceConsumer.isInstance(currentEquippedItemStack.getItem())) {
+                    //noinspection unchecked
                     Method attemptRepair = IForceConsumer.getMethod("attemptRepair", ItemStack.class);
                     attemptRepair.invoke(currentEquippedItemStack, currentEquippedItemStack);
                     devLog("Repairing dartcraft force consumer");
@@ -177,11 +179,9 @@ public class VeinMinerModSupport {
             } catch (ClassNotFoundException e) {
                 devLog("Strange, I thought we already found the Dartcraft class.");
                 forceConsumerAvailable = false;
-                return;
             } catch (NoSuchMethodException e) {
                 devLog("Strange, I thought we already found the Dartcraft class and correct method.");
                 forceConsumerAvailable = false;
-                return;
             } catch (InvocationTargetException e) {
                 devLog("Trying to repair Dartcraft tools didn't work. It threw a InvocationTargetException.");
                 forceConsumerAvailable = false;
