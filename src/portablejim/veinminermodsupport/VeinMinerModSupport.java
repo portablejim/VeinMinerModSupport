@@ -40,6 +40,7 @@ import java.util.Random;
 
 import static cpw.mods.fml.common.Mod.Init;
 import static cpw.mods.fml.common.Mod.Instance;
+import static cpw.mods.fml.common.Mod.PostInit;
 
 /**
  * Main mod class to handle events from Veinminer and cancel events when
@@ -73,6 +74,7 @@ public class VeinMinerModSupport {
         forceConsumerAvailable = false;
     }
 
+    @PostInit
     public void postInit(FMLPostInitializationEvent event) {
         if(Loader.isModLoaded("DartCraft")) {
             devLog("Testing for dartcraft classes and functions.");
