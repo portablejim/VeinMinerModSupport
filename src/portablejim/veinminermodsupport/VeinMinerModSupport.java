@@ -173,7 +173,7 @@ public class VeinMinerModSupport {
                 if(IForceConsumer.isInstance(currentEquippedItemStack.getItem())) {
                     //noinspection unchecked
                     Method attemptRepair = IForceConsumer.getMethod("attemptRepair", ItemStack.class);
-                    attemptRepair.invoke(currentEquippedItemStack, currentEquippedItemStack);
+                    attemptRepair.invoke(currentEquippedItemStack.getItem(), currentEquippedItemStack);
                     devLog("Repairing dartcraft force consumer");
                 }
             } catch (ClassNotFoundException e) {
