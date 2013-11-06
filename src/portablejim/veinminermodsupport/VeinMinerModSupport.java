@@ -23,6 +23,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,8 +31,11 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
+import portablejim.veinminer.api.VeinminerPostUseTool;
 import portablejim.veinminer.api.VeinminerStartCheck;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Random;
 
 import static cpw.mods.fml.common.Mod.Init;
@@ -52,6 +56,8 @@ public class VeinMinerModSupport {
     @Instance(ModInfo.MOD_ID)
     public static VeinMinerModSupport instance;
 
+    public boolean forceConsumerAvailable;
+
     @Init
     public void init(@SuppressWarnings("UnusedParameters") FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
@@ -62,6 +68,23 @@ public class VeinMinerModSupport {
             if(fileName.contains("-dev") || !fileName.contains(".jar")) {
                 debugMode = true;
                 devLog("DEV VERSION");
+            }
+        }
+        forceConsumerAvailable = false;
+    }
+
+    public void postInit(FMLPostInitializationEvent event) {
+        if(Loader.isModLoaded("DartCraft")) {
+            devLog("Testing for dartcraft classes and functions.");
+            try {
+                Object obj = Class.forName("bluedart.api.IForceConsumer").getMethod("attemptRepair", ItemStack.class);
+
+                // Class present.
+                forceConsumerAvailable = true;
+            } catch (ClassNotFoundException e) {
+                devLog("Failed to find Dartcraft force consumer. Disabling repair support");
+            } catch (NoSuchMethodException e) {
+                devLog("Failed to find Dartcraft force consumer function. Disabling repair support");
             }
         }
     }
@@ -131,5 +154,39 @@ public class VeinMinerModSupport {
 
         devLog("Canceling event");
         event.setCanceled(true);
+    }
+
+    @ForgeSubscribe
+    public void applyForce(VeinminerPostUseTool event) {
+        ItemStack currentEquippedItemStack = event.player.getCurrentEquippedItem();
+
+        // Pre-compute if avaliable to short circuit logic if not found.
+        // Method called lots (many times a second, possibly thousand times).
+        // Reflection is slow, and you'll probably feel it.
+        if(forceConsumerAvailable && Loader.isModLoaded("DartCraft")) {
+            devLog("Reflecting on Dartcraft run repair method.");
+            try {
+                Class IForceConsumer = Class.forName("bluedart.api.IForceConsumer");
+                if(IForceConsumer.isInstance(currentEquippedItemStack.getItem())) {
+                    Method attemptRepair = IForceConsumer.getMethod("attemptRepair", ItemStack.class);
+                    attemptRepair.invoke(currentEquippedItemStack, currentEquippedItemStack);
+                    devLog("Repairing dartcraft force consumer");
+                }
+            } catch (ClassNotFoundException e) {
+                devLog("Strange, I thought we already found the Dartcraft class.");
+                forceConsumerAvailable = false;
+                return;
+            } catch (NoSuchMethodException e) {
+                devLog("Strange, I thought we already found the Dartcraft class and correct method.");
+                forceConsumerAvailable = false;
+                return;
+            } catch (InvocationTargetException e) {
+                devLog("Trying to repair Dartcraft tools didn't work. It threw a InvocationTargetException.");
+                forceConsumerAvailable = false;
+            } catch (IllegalAccessException e) {
+                devLog("Trying to repair Dartcraft tools didn't work. It threw a IllegalAccessException.");
+                forceConsumerAvailable = false;
+            }
+        }
     }
 }
