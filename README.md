@@ -6,6 +6,7 @@ Provides better mod support than is provided by VeinMiner by default.
 Current support:
  * Dartcraft tools with grinding (and possibly smelting).
  * Tinkers Construct tools with auto-smelt
+ * Auto-repairs Dartcraft tools with liquid force after each block, so all force is used.
 
 Minecraft Versions supported
 ----------------------------
