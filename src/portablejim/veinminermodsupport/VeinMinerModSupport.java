@@ -100,6 +100,12 @@ public class VeinMinerModSupport {
 
     @ForgeSubscribe
     public void makeToolsWork(VeinminerStartCheck event) {
+        ItemStack currentEquipped = event.player.getCurrentEquippedItem();
+
+        if(currentEquipped == null) {
+            return;
+        }
+
         Item currentEquippedItem = event.player.getCurrentEquippedItem().getItem();
         if(Loader.isModLoaded("DartCraft")) {
             devLog("Dartcraft detected");
