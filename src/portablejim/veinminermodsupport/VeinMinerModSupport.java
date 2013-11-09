@@ -128,7 +128,7 @@ public class VeinMinerModSupport {
         }
         NBTTagCompound toolTags = currentItem.getTagCompound().getCompoundTag("InfiTool");
         if(toolTags == null) {
-            devLog("ERROR: Not Dartcraft Tool");
+            devLog("ERROR: Not Tinkers Construct Tool");
             return;
         }
 
@@ -164,7 +164,7 @@ public class VeinMinerModSupport {
         ItemStack currentEquippedItemStack = event.player.getCurrentEquippedItem();
 
         // Pre-compute if avaliable to short circuit logic if not found.
-        // Method called lots (many times a second, possibly thousand times).
+        // Method called lots (many times a second, possibly thousand times total).
         // Reflection is slow, and you'll probably feel it.
         if(forceConsumerAvailable && currentEquippedItemStack != null && Loader.isModLoaded("DartCraft")) {
             devLog("Reflecting on Dartcraft run repair method.");
