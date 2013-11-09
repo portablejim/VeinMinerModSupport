@@ -166,11 +166,11 @@ public class VeinMinerModSupport {
         // Pre-compute if avaliable to short circuit logic if not found.
         // Method called lots (many times a second, possibly thousand times).
         // Reflection is slow, and you'll probably feel it.
-        if(forceConsumerAvailable && Loader.isModLoaded("DartCraft")) {
+        if(forceConsumerAvailable && currentEquippedItemStack != null && Loader.isModLoaded("DartCraft")) {
             devLog("Reflecting on Dartcraft run repair method.");
             try {
                 Class IForceConsumer = Class.forName("bluedart.api.IForceConsumer");
-                if(IForceConsumer.isInstance(currentEquippedItemStack.getItem())) {
+                if(IForceConsumer != null && IForceConsumer.isInstance(currentEquippedItemStack.getItem())) {
                     //noinspection unchecked
                     Method attemptRepair = IForceConsumer.getMethod("attemptRepair", ItemStack.class);
                     attemptRepair.invoke(currentEquippedItemStack.getItem(), currentEquippedItemStack);
