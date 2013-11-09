@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.3.1
+-----
+* Fix potential crash if tool runs out while mining.
+* Fix dev log messages.
+
 0.3
 ----
 * Update to use new VeinMiner API.
