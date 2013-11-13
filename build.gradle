@@ -31,7 +31,12 @@ processResources {
     }
 }
 
-task devJar(type: Jar) {
-    appendix = '-dev'
+task devJar(type: Jar, dependsOn: 'compileJava') {
+    from project.sourceSets.main.output
+    appendix = 'dev'
+}
+
+tasks.reobf {
+    reobf tasks.devJar
 }
 
