@@ -1,0 +1,39 @@
+buildscript {
+    repositories { mavenCentral() }
+    dependencies { classpath 'com.github.abrarsyed.gmcp:GMCP:latest.integration' }
+}
+
+apply plugin: "gmcp"
+
+Properties props = new Properties()
+propsFile = file('version.properties')
+props.load(propsFile.newDataInputStream())
+
+group = 'portablejim.veinminermodsupport'
+version = props.getProperty('version')
+archivesBaseName = 'VeinMinerModSupport'
+
+minecraft {
+    baseDir = "../../gmcp"
+    minecraftVersion = '1.6.4'
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/*.lang'
+        include '**/*.info'
+        expand version: version, mcversion: minecraft.minecraftVersion
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude '**/*.lang'
+        exclude '**/*.info'
+    }
+}
+
+jar { }
+
+task devJar(type: Jar) {
+    appendix = '-dev'
+}
+
