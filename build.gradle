@@ -31,8 +31,6 @@ processResources {
     }
 }
 
-jar { }
-
 task devJar(type: Jar) {
     appendix = '-dev'
 }
