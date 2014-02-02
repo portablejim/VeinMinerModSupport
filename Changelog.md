@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.4.0
+------
+* Update to use new VeinMiner API as of VeinMiner 0.10.0
+* Require minimum of VeinMiner 0.10.0
+
 0.3.2
 ------
 * Fix another crash.
