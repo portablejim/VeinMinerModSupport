@@ -31,6 +31,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
+import portablejim.veinminer.api.Permission;
 import portablejim.veinminer.api.VeinminerPostUseTool;
 import portablejim.veinminer.api.VeinminerStartCheck;
 
@@ -109,9 +110,9 @@ public class VeinMinerModSupport {
         Item currentEquippedItem = event.player.getCurrentEquippedItem().getItem();
         if(Loader.isModLoaded("DartCraft")) {
             devLog("Dartcraft detected");
-            if(currentEquippedItem instanceof IBreakable) {
+            if(currentEquippedItem instanceof IBreakable && event.allowVeinminerStart == Permission.DENY) {
                 devLog("Allowed start");
-                event.allowVeinminerStart = true;
+                event.allowVeinminerStart = Permission.ALLOW;
             }
         }
         if(Loader.isModLoaded("TConstruct")) {
@@ -162,7 +163,9 @@ public class VeinMinerModSupport {
         }
 
         devLog("Allowing event");
-        event.allowVeinminerStart = true;
+        if(event.allowVeinminerStart == Permission.DENY) {
+            event.allowVeinminerStart = Permission.ALLOW;
+        }
     }
 
     @ForgeSubscribe

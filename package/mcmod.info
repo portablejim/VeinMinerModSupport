@@ -12,7 +12,7 @@
         "logoFile": "",
         "screenshots": [],
         "parent": "VeinMiner",
-        "requiredMods": ["Forge", "VeinMiner@[0.8,)"],
+        "requiredMods": ["Forge", "VeinMiner@[0.10,)"],
         "dependencies": ["VeinMiner"],
         "dependants": [],
         "useDependencyInformation": "true"
