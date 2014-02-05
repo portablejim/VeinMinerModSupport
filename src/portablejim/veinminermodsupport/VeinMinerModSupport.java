@@ -31,9 +31,9 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
+import portablejim.veinminer.api.VeinminerHarvestFailedCheck;
 import portablejim.veinminer.api.Permission;
 import portablejim.veinminer.api.VeinminerPostUseTool;
-import portablejim.veinminer.api.VeinminerStartCheck;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -100,7 +100,7 @@ public class VeinMinerModSupport {
     }
 
     @ForgeSubscribe
-    public void makeToolsWork(VeinminerStartCheck event) {
+    public void makeToolsWork(VeinminerHarvestFailedCheck event) {
         ItemStack currentEquipped = event.player.getCurrentEquippedItem();
 
         if(currentEquipped == null) {
@@ -110,9 +110,9 @@ public class VeinMinerModSupport {
         Item currentEquippedItem = event.player.getCurrentEquippedItem().getItem();
         if(Loader.isModLoaded("DartCraft")) {
             devLog("Dartcraft detected");
-            if(currentEquippedItem instanceof IBreakable && event.allowVeinminerStart == Permission.DENY) {
+            if(currentEquippedItem instanceof IBreakable && event.allowContinue == Permission.DENY) {
                 devLog("Allowed start");
-                event.allowVeinminerStart = Permission.ALLOW;
+                event.allowContinue = Permission.ALLOW;
             }
         }
         if(Loader.isModLoaded("TConstruct")) {
@@ -121,7 +121,7 @@ public class VeinMinerModSupport {
         }
     }
 
-    private void tinkersConstructToolEvent(VeinminerStartCheck event) {
+    private void tinkersConstructToolEvent(VeinminerHarvestFailedCheck event) {
         ItemStack currentItem = event.player.getCurrentEquippedItem();
 
         if(currentItem == null) {
@@ -163,8 +163,8 @@ public class VeinMinerModSupport {
         }
 
         devLog("Allowing event");
-        if(event.allowVeinminerStart == Permission.DENY) {
-            event.allowVeinminerStart = Permission.ALLOW;
+        if(event.allowContinue == Permission.DENY) {
+            event.allowContinue = Permission.ALLOW;
         }
     }
 

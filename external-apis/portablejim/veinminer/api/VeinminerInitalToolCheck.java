@@ -21,19 +21,23 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.Event;
 
 /**
- * Event to check whether the current equipped tool can Veinmine.
- * allowTool == Permission.FORCE_ALLOW: Permit tool.
- * allowTool == Permission.ALLOW: Permit tool.
- * allowTool == Permission.DENY: Default. Allow tool if player can mine stone.
- * allowTool == Permission.FORCE_DENY: Don't allow tool at all.
+ * Event to configure or disallow the Veinmining of all tools. This takes place before item/block filtering
  */
 
-public class VeinminerToolCheck extends Event {
-    public Permission allowTool;
+public class VeinminerInitalToolCheck extends Event {
+    public Permission allowVeinminerStart;
     public final EntityPlayerMP player;
+    public final int radiusLimitConfig;
+    public final int blockLimitConfig;
+    public int radiusLimit;
+    public int blockLimit;
 
-    public VeinminerToolCheck(EntityPlayerMP player) {
-        allowTool = Permission.DENY;
+    public VeinminerInitalToolCheck(EntityPlayerMP player, int radiusLimit, int blockLimit, int radiusLimitConfig, int blockLimitConfig) {
+        this.allowVeinminerStart = Permission.ALLOW;
         this.player = player;
+        this.radiusLimitConfig = radiusLimitConfig;
+        this.blockLimitConfig = blockLimitConfig;
+        this.radiusLimit = radiusLimit;
+        this.blockLimit = blockLimit;
     }
 }
