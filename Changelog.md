@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.5.0
+-----
+* Update to use new VeinMiner API as of VeinMiner 0.12.0
+
 0.4.0
 ------
 * Update to use new VeinMiner API as of VeinMiner 0.10.0
