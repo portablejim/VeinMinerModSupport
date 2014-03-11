@@ -119,6 +119,17 @@ public class VeinMinerModSupport {
             devLog("Tinkers Construct detected");
             tinkersConstructToolEvent(event);
         }
+        if(Loader.isModLoaded("crowley.skyblock")) {
+            devLog("Ex Nihilo detected");
+            if (currentEquippedItem != null && currentEquippedItem.getClass().getCanonicalName().startsWith("exnihilo.items.hammers")
+                    && event.allowContinue == Permission.DENY) {
+                devLog("Allowed hammer start");
+                event.allowContinue = Permission.ALLOW;
+            }
+            else if(currentEquippedItem != null) {
+                devLog(currentEquippedItem.getClass().getCanonicalName());
+            }
+        }
     }
 
     private void tinkersConstructToolEvent(VeinminerHarvestFailedCheck event) {
