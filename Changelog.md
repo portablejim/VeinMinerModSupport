@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.5.1
+-----
+* Added support for Ex Nihilo Tools.
+
 0.5.0
 -----
 * Update to use new VeinMiner API as of VeinMiner 0.12.0
