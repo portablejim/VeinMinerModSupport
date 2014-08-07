@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.6.0
+------
+* Move to 'new' gradle build process. This means 1.5 support is dropped.
+* Add Ex Aliquo support.
+
 0.5.1
 -----
 * Added support for Ex Nihilo Tools.

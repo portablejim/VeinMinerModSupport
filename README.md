@@ -7,10 +7,11 @@ Current support:
  * Dartcraft tools with grinding (and possibly smelting).
  * Tinkers Construct tools with auto-smelt
  * Auto-repairs Dartcraft tools with liquid force after each block, so all force is used.
+ * Ex nihilo and Ex Aliquo hammer support
 
 Minecraft Versions supported
 ----------------------------
-This supports both 1.5 and 1.6
+This supports 1.6
 
 Installation
 ------------
