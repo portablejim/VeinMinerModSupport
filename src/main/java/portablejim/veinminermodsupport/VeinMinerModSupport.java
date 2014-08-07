@@ -48,10 +48,9 @@ import java.util.Random;
 public class VeinMinerModSupport {
     private boolean debugMode = false;
 
-    @Mod.Instance(ModInfo.MOD_ID)
-    public static VeinMinerModSupport instance;
     public boolean forceConsumerAvailable;
 
+    @SuppressWarnings("UnusedParameters")
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
@@ -73,7 +72,7 @@ public class VeinMinerModSupport {
         if (Loader.isModLoaded("DartCraft")) {
             devLog("Testing for dartcraft classes and functions.");
             try {
-                Object obj = Class.forName("bluedart.api.IForceConsumer").getMethod("attemptRepair", new Class[]{ItemStack.class});
+                Class.forName("bluedart.api.IForceConsumer").getMethod("attemptRepair", ItemStack.class);
 
                 // Class present.
                 forceConsumerAvailable = true;
@@ -91,6 +90,7 @@ public class VeinMinerModSupport {
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @ForgeSubscribe
     public void makeToolsWork(VeinminerHarvestFailedCheck event) {
         ItemStack currentEquipped = event.player.getCurrentEquippedItem();
@@ -169,6 +169,7 @@ public class VeinMinerModSupport {
             event.allowContinue = Permission.ALLOW;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @ForgeSubscribe
     public void applyForce(VeinminerPostUseTool event) {
         ItemStack currentEquippedItemStack = event.player.getCurrentEquippedItem();
