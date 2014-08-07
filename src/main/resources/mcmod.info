@@ -1,0 +1,19 @@
+[
+    {
+        "modid": "VeinMinerModSupport",
+        "name": "VeinMiner Mod Support",
+        "description": "Mod to use API of VeinMiner to support various mods' items.",
+        "version": "${version}",
+        "url": "",
+        "updateUrl": "",
+        "authors": ["Portablejim"],
+        "credits": "Inspired by ConnectedDestruction by DaftPVF, currently maintained by bspkrs",
+        "logoFile": "",
+        "screenshots": [],
+        "parent": "VeinMiner",
+        "requiredMods": ["Forge@[8,9)", "VeinMiner@[0.12,)"],
+        "dependencies": ["VeinMiner"],
+        "dependants": [],
+        "useDependencyInformation": "true"
+    }
+]

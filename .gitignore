@@ -1,4 +1,7 @@
 *.iml
+.gradle/
+eclipse/
+out/
 package/replaced/*
 release/*.jar
 run/
