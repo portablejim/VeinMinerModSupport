@@ -31,16 +31,13 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
+import portablejim.veinminer.api.Permission;
+import portablejim.veinminer.api.VeinminerHarvestFailedCheck;
 import portablejim.veinminer.api.VeinminerPostUseTool;
-import portablejim.veinminer.api.VeinminerStartCheck;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Random;
-
-import static cpw.mods.fml.common.Mod.Init;
-import static cpw.mods.fml.common.Mod.Instance;
-import static cpw.mods.fml.common.Mod.PostInit;
 
 /**
  * Main mod class to handle events from Veinminer and cancel events when
@@ -51,22 +48,20 @@ import static cpw.mods.fml.common.Mod.PostInit;
         name = ModInfo.MOD_NAME,
         version = ModInfo.VERSION)
 public class VeinMinerModSupport {
-
     private boolean debugMode = false;
 
-    @Instance(ModInfo.MOD_ID)
+    @Mod.Instance(ModInfo.MOD_ID)
     public static VeinMinerModSupport instance;
-
     public boolean forceConsumerAvailable;
 
-    @Init
-    public void init(@SuppressWarnings("UnusedParameters") FMLInitializationEvent event) {
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
 
         ModContainer thisMod = Loader.instance().getIndexedModList().get(ModInfo.MOD_ID);
-        if(thisMod != null) {
+        if (thisMod != null) {
             String fileName = thisMod.getSource().getName();
-            if(fileName.contains("-dev") || !fileName.contains(".jar")) {
+            if (fileName.contains("-dev") || !fileName.contains(".jar")) {
                 debugMode = true;
                 devLog("DEV VERSION");
             }
@@ -74,13 +69,13 @@ public class VeinMinerModSupport {
         forceConsumerAvailable = false;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    @PostInit
+    @SuppressWarnings("UnusedParameters")
+    @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        if(Loader.isModLoaded("DartCraft")) {
+        if (Loader.isModLoaded("DartCraft")) {
             devLog("Testing for dartcraft classes and functions.");
             try {
-                Object obj = Class.forName("bluedart.api.IForceConsumer").getMethod("attemptRepair", ItemStack.class);
+                Object obj = Class.forName("bluedart.api.IForceConsumer").getMethod("attemptRepair", new Class[]{ItemStack.class});
 
                 // Class present.
                 forceConsumerAvailable = true;
@@ -93,60 +88,69 @@ public class VeinMinerModSupport {
     }
 
     private void devLog(String string) {
-        if(debugMode) {
+        if (debugMode) {
             FMLLog.getLogger().info("[" + ModInfo.MOD_ID + "] " + string);
         }
     }
 
     @ForgeSubscribe
-    public void makeToolsWork(VeinminerStartCheck event) {
+    public void makeToolsWork(VeinminerHarvestFailedCheck event) {
         ItemStack currentEquipped = event.player.getCurrentEquippedItem();
 
-        if(currentEquipped == null) {
+        if (currentEquipped == null) {
             return;
         }
 
         Item currentEquippedItem = event.player.getCurrentEquippedItem().getItem();
-        if(Loader.isModLoaded("DartCraft")) {
+        if (Loader.isModLoaded("DartCraft")) {
             devLog("Dartcraft detected");
-            if(currentEquippedItem instanceof IBreakable) {
+            if ((currentEquippedItem instanceof IBreakable) && event.allowContinue == Permission.DENY) {
                 devLog("Allowed start");
-                event.allowVeinminerStart = true;
+                event.allowContinue = Permission.ALLOW;
             }
         }
-        if(Loader.isModLoaded("TConstruct")) {
+        if (Loader.isModLoaded("TConstruct")) {
             devLog("Tinkers Construct detected");
             tinkersConstructToolEvent(event);
         }
+        if (Loader.isModLoaded("crowley.skyblock")) {
+            devLog("Ex Nihilo detected");
+            if ((currentEquippedItem != null) && (currentEquippedItem.getClass().getCanonicalName().startsWith("exnihilo.items.hammers")) && (event.allowContinue == Permission.DENY)) {
+                devLog("Allowed hammer start");
+                event.allowContinue = Permission.ALLOW;
+            } else if (currentEquippedItem != null) {
+                devLog(currentEquippedItem.getClass().getCanonicalName());
+            }
+        }
     }
 
-    private void tinkersConstructToolEvent(VeinminerStartCheck event) {
+    private void tinkersConstructToolEvent(VeinminerHarvestFailedCheck event) {
         ItemStack currentItem = event.player.getCurrentEquippedItem();
 
-        if(currentItem == null) {
+        if (currentItem == null) {
             devLog("ERROR: Item is null");
             return;
         }
 
-        if(!currentItem.hasTagCompound()) {
+        if (!currentItem.hasTagCompound()) {
             devLog("ERROR: No NBT data");
             return;
         }
         NBTTagCompound toolTags = currentItem.getTagCompound().getCompoundTag("InfiTool");
-        if(toolTags == null) {
+        if (toolTags == null) {
             devLog("ERROR: Not Tinkers Construct Tool");
             return;
         }
 
         boolean hasLava = toolTags.getBoolean("Lava");
-        if(!hasLava) {
+        if (!hasLava) {
             devLog("ERROR: Not lava tool");
             return;
         }
 
         Random r = event.player.worldObj.rand;
         Block block = Block.blocksList[event.blockId];
-        if(block == null || event.blockId < 1 || event.blockId > 4095) {
+        if (block == null || event.blockId < 1 || event.blockId > 4095) {
             devLog("ERROR: Block id out of range");
             return;
         }
@@ -155,14 +159,16 @@ public class VeinMinerModSupport {
                 block.idDropped(event.blockMetadata, r, 0),
                 block.quantityDropped(event.blockMetadata, 0, r),
                 block.damageDropped(event.blockMetadata));
+
         ItemStack smeltResult = FurnaceRecipes.smelting().getSmeltingResult(smeltStack);
-        if(smeltResult == null) {
+        if (smeltResult == null) {
             devLog("ERROR: No Smelt result");
             return;
         }
 
         devLog("Allowing event");
-        event.allowVeinminerStart = true;
+        if (event.allowContinue == Permission.DENY)
+            event.allowContinue = Permission.ALLOW;
     }
 
     @ForgeSubscribe
@@ -172,11 +178,11 @@ public class VeinMinerModSupport {
         // Pre-compute if avaliable to short circuit logic if not found.
         // Method called lots (many times a second, possibly thousand times total).
         // Reflection is slow, and you'll probably feel it.
-        if(forceConsumerAvailable && currentEquippedItemStack != null && Loader.isModLoaded("DartCraft")) {
+        if (forceConsumerAvailable && currentEquippedItemStack != null && Loader.isModLoaded("DartCraft")) {
             devLog("Reflecting on Dartcraft run repair method.");
             try {
                 Class IForceConsumer = Class.forName("bluedart.api.IForceConsumer");
-                if(IForceConsumer != null && IForceConsumer.isInstance(currentEquippedItemStack.getItem())) {
+                if (IForceConsumer != null && IForceConsumer.isInstance(currentEquippedItemStack.getItem())) {
                     //noinspection unchecked
                     Method attemptRepair = IForceConsumer.getMethod("attemptRepair", ItemStack.class);
                     attemptRepair.invoke(currentEquippedItemStack.getItem(), currentEquippedItemStack);
@@ -197,4 +203,4 @@ public class VeinMinerModSupport {
             }
         }
     }
-}
+} 

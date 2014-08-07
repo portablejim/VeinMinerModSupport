@@ -21,13 +21,23 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.Event;
 
 /**
- * Event called after a block has been destroyed.
+ * Event to configure or disallow the Veinmining of all tools. This takes place before item/block filtering
  */
 
-public class VeinminerPostUseTool extends Event {
+public class VeinminerInitalToolCheck extends Event {
+    public Permission allowVeinminerStart;
     public final EntityPlayerMP player;
+    public final int radiusLimitConfig;
+    public final int blockLimitConfig;
+    public int radiusLimit;
+    public int blockLimit;
 
-    public VeinminerPostUseTool(EntityPlayerMP player) {
+    public VeinminerInitalToolCheck(EntityPlayerMP player, int radiusLimit, int blockLimit, int radiusLimitConfig, int blockLimitConfig) {
+        this.allowVeinminerStart = Permission.ALLOW;
         this.player = player;
+        this.radiusLimitConfig = radiusLimitConfig;
+        this.blockLimitConfig = blockLimitConfig;
+        this.radiusLimit = radiusLimit;
+        this.blockLimit = blockLimit;
     }
 }

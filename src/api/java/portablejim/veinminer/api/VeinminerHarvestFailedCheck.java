@@ -21,13 +21,21 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.Event;
 
 /**
- * Event called after a block has been destroyed.
+ * Event to check if Veinmine-ing should start, even though tryHarvestBlock returned false.
+ * allowVeinminer == Permission.FORCE_ALLOW || allowVeinMiner.ALLOW: Allow Veinminer to start.
+ * allowVeinminer == Permission.FORCE_DENY || allowVeinMiner.DENY: Don't allow Veinminer to start.
  */
 
-public class VeinminerPostUseTool extends Event {
+public class VeinminerHarvestFailedCheck extends Event {
+    public Permission allowContinue;
     public final EntityPlayerMP player;
+    public final int blockId;
+    public final int blockMetadata;
 
-    public VeinminerPostUseTool(EntityPlayerMP player) {
+    public VeinminerHarvestFailedCheck(EntityPlayerMP player, int id, int metadata) {
+        allowContinue = Permission.DENY;
         this.player = player;
+        this.blockId = id;
+        this.blockMetadata = metadata;
     }
 }
