@@ -15,7 +15,7 @@ apply plugin: 'forge'
 
 version = "1.6.x-0.5.2"
 group= "portablejim.veinminermodsupport" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "modid"
+archivesBaseName = "VeinMinerModSupport"
 
 minecraft {
 	version = "1.6.4-9.11.1.964"
