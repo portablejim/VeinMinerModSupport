@@ -114,7 +114,16 @@ public class VeinMinerModSupport {
         if (Loader.isModLoaded("crowley.skyblock")) {
             devLog("Ex Nihilo detected");
             if ((currentEquippedItem != null) && (currentEquippedItem.getClass().getCanonicalName().startsWith("exnihilo.items.hammers")) && (event.allowContinue == Permission.DENY)) {
-                devLog("Allowed hammer start");
+                devLog("Allowed Ex Nihilo hammer start");
+                event.allowContinue = Permission.ALLOW;
+            } else if (currentEquippedItem != null) {
+                devLog(currentEquippedItem.getClass().getCanonicalName());
+            }
+        }
+        if (Loader.isModLoaded("exaliquo")) {
+            devLog("Ex Aliquo detected");
+            if ((currentEquippedItem != null) && (currentEquippedItem.getClass().getCanonicalName().startsWith("exaliquo.items")) && (event.allowContinue == Permission.DENY)) {
+                devLog("Allowed Ex Aliquo hammer start");
                 event.allowContinue = Permission.ALLOW;
             } else if (currentEquippedItem != null) {
                 devLog(currentEquippedItem.getClass().getCanonicalName());
