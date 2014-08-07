@@ -44,9 +44,7 @@ import java.util.Random;
  * special mod support is wanted.
  */
 
-@Mod(modid = ModInfo.MOD_ID,
-        name = ModInfo.MOD_NAME,
-        version = ModInfo.VERSION)
+@Mod(modid = ModInfo.MOD_ID, name = ModInfo.MOD_NAME)
 public class VeinMinerModSupport {
     private boolean debugMode = false;
 
