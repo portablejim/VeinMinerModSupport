@@ -1,42 +1,38 @@
 buildscript {
-    repositories { mavenCentral() }
-    dependencies { classpath 'com.github.abrarsyed.gmcp:GMCP:latest.integration' }
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+    }
 }
 
-apply plugin: "gmcp"
+apply plugin: 'forge'
 
-Properties props = new Properties()
-propsFile = file('version.properties')
-props.load(propsFile.newDataInputStream())
-
-group = 'portablejim.veinminermodsupport'
-version = props.getProperty('version')
-archivesBaseName = 'VeinMinerModSupport'
+version = "0.3.2"
+group= "portablejim.veinminermodsupport" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "modid"
 
 minecraft {
-    baseDir = "../../gmcp"
-    minecraftVersion = '1.6.4'
+	version = "1.6.4-9.11.1.964"
 }
 
-processResources {
+processResources
+{
+    // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
-        include '**/*.lang'
-        include '**/*.info'
-        expand version: version, mcversion: minecraft.minecraftVersion
+        include 'mcmod/info'
+                
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version
     }
-
+        
+    // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
-        exclude '**/*.lang'
-        exclude '**/*.info'
+        exclude 'mcmod.info'
     }
 }
-
-task devJar(type: Jar, dependsOn: 'compileJava') {
-    from project.sourceSets.main.output
-    appendix = 'dev'
-}
-
-tasks.reobf {
-    reobf tasks.devJar
-}
-
